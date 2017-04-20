@@ -1,0 +1,600 @@
+
+FlashLight.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000002c4  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  0000033b  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .eeprom       00000003  00810000  00810000  00000338  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  3 .comment      00000030  00000000  00000000  0000033b  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000036c  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000048  00000000  00000000  000003a8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   0000063d  00000000  00000000  000003f0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 00000229  00000000  00000000  00000a2d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   0000040d  00000000  00000000  00000c56  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  000000a8  00000000  00000000  00001064  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    000002b0  00000000  00000000  0000110c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    000003b3  00000000  00000000  000013bc  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000038  00000000  00000000  0000176f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	10 c0       	rjmp	.+32     	; 0x22 <__ctors_end>
+   2:	15 c0       	rjmp	.+42     	; 0x2e <__bad_interrupt>
+   4:	14 c0       	rjmp	.+40     	; 0x2e <__bad_interrupt>
+   6:	13 c0       	rjmp	.+38     	; 0x2e <__bad_interrupt>
+   8:	12 c0       	rjmp	.+36     	; 0x2e <__bad_interrupt>
+   a:	11 c0       	rjmp	.+34     	; 0x2e <__bad_interrupt>
+   c:	10 c0       	rjmp	.+32     	; 0x2e <__bad_interrupt>
+   e:	0f c0       	rjmp	.+30     	; 0x2e <__bad_interrupt>
+  10:	0e c0       	rjmp	.+28     	; 0x2e <__bad_interrupt>
+  12:	0d c0       	rjmp	.+26     	; 0x2e <__bad_interrupt>
+  14:	bf c0       	rjmp	.+382    	; 0x194 <main+0xcc>
+  16:	c0 c0       	rjmp	.+384    	; 0x198 <main+0xd0>
+  18:	c1 c0       	rjmp	.+386    	; 0x19c <main+0xd4>
+  1a:	c2 c0       	rjmp	.+388    	; 0x1a0 <main+0xd8>
+  1c:	c3 c0       	rjmp	.+390    	; 0x1a4 <main+0xdc>
+  1e:	d8 c0       	rjmp	.+432    	; 0x1d0 <main+0x108>
+  20:	09 c1       	rjmp	.+530    	; 0x234 <main+0x16c>
+
+00000022 <__ctors_end>:
+  22:	11 24       	eor	r1, r1
+  24:	1f be       	out	0x3f, r1	; 63
+  26:	cf e9       	ldi	r28, 0x9F	; 159
+  28:	cd bf       	out	0x3d, r28	; 61
+  2a:	4e d0       	rcall	.+156    	; 0xc8 <main>
+  2c:	49 c1       	rjmp	.+658    	; 0x2c0 <_exit>
+
+0000002e <__bad_interrupt>:
+  2e:	e8 cf       	rjmp	.-48     	; 0x0 <__vectors>
+
+00000030 <_Z8ADC_Initv>:
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+  30:	80 e4       	ldi	r24, 0x40	; 64
+  32:	87 b9       	out	0x07, r24	; 7
+  34:	83 e0       	ldi	r24, 0x03	; 3
+  36:	86 b9       	out	0x06, r24	; 6
+  38:	37 9a       	sbi	0x06, 7	; 6
+  3a:	36 9a       	sbi	0x06, 6	; 6
+  3c:	36 99       	sbic	0x06, 6	; 6
+  3e:	fe cf       	rjmp	.-4      	; 0x3c <_Z8ADC_Initv+0xc>
+  40:	84 b1       	in	r24, 0x04	; 4
+  42:	95 b1       	in	r25, 0x05	; 5
+  44:	08 95       	ret
+
+00000046 <_Z8ADC_Readh>:
+  46:	97 b1       	in	r25, 0x07	; 7
+  48:	8f 71       	andi	r24, 0x1F	; 31
+  4a:	90 7e       	andi	r25, 0xE0	; 224
+  4c:	89 2b       	or	r24, r25
+  4e:	87 b9       	out	0x07, r24	; 7
+  50:	36 9a       	sbi	0x06, 6	; 6
+  52:	36 99       	sbic	0x06, 6	; 6
+  54:	fe cf       	rjmp	.-4      	; 0x52 <_Z8ADC_Readh+0xc>
+  56:	84 b1       	in	r24, 0x04	; 4
+  58:	95 b1       	in	r25, 0x05	; 5
+  5a:	08 95       	ret
+
+0000005c <_Z12ADC_Read_Avghh>:
+  5c:	cf 92       	push	r12
+  5e:	df 92       	push	r13
+  60:	ef 92       	push	r14
+  62:	ff 92       	push	r15
+  64:	1f 93       	push	r17
+  66:	cf 93       	push	r28
+  68:	df 93       	push	r29
+  6a:	18 2f       	mov	r17, r24
+  6c:	d6 2f       	mov	r29, r22
+  6e:	66 23       	and	r22, r22
+  70:	71 f0       	breq	.+28     	; 0x8e <_Z12ADC_Read_Avghh+0x32>
+  72:	c0 e0       	ldi	r28, 0x00	; 0
+  74:	c1 2c       	mov	r12, r1
+  76:	d1 2c       	mov	r13, r1
+  78:	76 01       	movw	r14, r12
+  7a:	81 2f       	mov	r24, r17
+  7c:	e4 df       	rcall	.-56     	; 0x46 <_Z8ADC_Readh>
+  7e:	c8 0e       	add	r12, r24
+  80:	d9 1e       	adc	r13, r25
+  82:	e1 1c       	adc	r14, r1
+  84:	f1 1c       	adc	r15, r1
+  86:	cf 5f       	subi	r28, 0xFF	; 255
+  88:	cd 13       	cpse	r28, r29
+  8a:	f7 cf       	rjmp	.-18     	; 0x7a <_Z12ADC_Read_Avghh+0x1e>
+  8c:	03 c0       	rjmp	.+6      	; 0x94 <_Z12ADC_Read_Avghh+0x38>
+  8e:	c1 2c       	mov	r12, r1
+  90:	d1 2c       	mov	r13, r1
+  92:	76 01       	movw	r14, r12
+  94:	2d 2f       	mov	r18, r29
+  96:	30 e0       	ldi	r19, 0x00	; 0
+  98:	40 e0       	ldi	r20, 0x00	; 0
+  9a:	50 e0       	ldi	r21, 0x00	; 0
+  9c:	c7 01       	movw	r24, r14
+  9e:	b6 01       	movw	r22, r12
+  a0:	d9 d0       	rcall	.+434    	; 0x254 <__udivmodsi4>
+  a2:	c9 01       	movw	r24, r18
+  a4:	df 91       	pop	r29
+  a6:	cf 91       	pop	r28
+  a8:	1f 91       	pop	r17
+  aa:	ff 90       	pop	r15
+  ac:	ef 90       	pop	r14
+  ae:	df 90       	pop	r13
+  b0:	cf 90       	pop	r12
+  b2:	08 95       	ret
+
+000000b4 <_Z9pwm_setupv>:
+  b4:	83 b7       	in	r24, 0x33	; 51
+  b6:	82 60       	ori	r24, 0x02	; 2
+  b8:	83 bf       	out	0x33, r24	; 51
+  ba:	8f b5       	in	r24, 0x2f	; 47
+  bc:	83 60       	ori	r24, 0x03	; 3
+  be:	8f bd       	out	0x2f, r24	; 47
+  c0:	8f b5       	in	r24, 0x2f	; 47
+  c2:	80 62       	ori	r24, 0x20	; 32
+  c4:	8f bd       	out	0x2f, r24	; 47
+  c6:	08 95       	ret
+
+000000c8 <main>:
+}
+
+int main (void)
+{	
+  c8:	cf 93       	push	r28
+  ca:	df 93       	push	r29
+  cc:	cd b7       	in	r28, 0x3d	; 61
+  ce:	dd 27       	eor	r29, r29
+  d0:	c5 50       	subi	r28, 0x05	; 5
+  d2:	cd bf       	out	0x3d, r28	; 61
+	ADC_Init();
+  d4:	ad df       	rcall	.-166    	; 0x30 <_Z8ADC_Initv>
+	pwm_setup();
+  d6:	ee df       	rcall	.-36     	; 0xb4 <_Z9pwm_setupv>
+	// LED is an output.
+	DDRB |= (1 << LED);
+  d8:	b9 9a       	sbi	0x17, 1	; 23
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+  da:	19 bc       	out	0x29, r1	; 41
+	// LED is an output.
+	DDRB |= (1 << LED);
+	pwm_write(0);
+
+	
+	volatile uint8_t	mode = eeprom_read_byte(&MODE_P);
+  dc:	82 e0       	ldi	r24, 0x02	; 2
+  de:	90 e0       	ldi	r25, 0x00	; 0
+  e0:	db d0       	rcall	.+438    	; 0x298 <eeprom_read_byte>
+  e2:	8d 83       	std	Y+5, r24	; 0x05
+	volatile uint8_t	prev_mode = mode;
+  e4:	8d 81       	ldd	r24, Y+5	; 0x05
+  e6:	8c 83       	std	Y+4, r24	; 0x04
+	volatile uint8_t	customlevel = eeprom_read_byte(&LEVEL_P);
+  e8:	81 e0       	ldi	r24, 0x01	; 1
+  ea:	90 e0       	ldi	r25, 0x00	; 0
+  ec:	d5 d0       	rcall	.+426    	; 0x298 <eeprom_read_byte>
+  ee:	8b 83       	std	Y+3, r24	; 0x03
+	volatile uint8_t	level = 0,battery=0;
+  f0:	1a 82       	std	Y+2, r1	; 0x02
+  f2:	19 82       	std	Y+1, r1	; 0x01
+	
+	if(mode>MODE_COUNT){
+  f4:	8d 81       	ldd	r24, Y+5	; 0x05
+  f6:	84 30       	cpi	r24, 0x04	; 4
+  f8:	40 f0       	brcs	.+16     	; 0x10a <main+0x42>
+		mode=0;
+  fa:	1d 82       	std	Y+5, r1	; 0x05
+		eeprom_busy_wait(); //make sure eeprom is ready
+  fc:	e1 99       	sbic	0x1c, 1	; 28
+  fe:	fe cf       	rjmp	.-4      	; 0xfc <main+0x34>
+		eeprom_write_byte(&MODE_P, mode); // save mode
+ 100:	6d 81       	ldd	r22, Y+5	; 0x05
+ 102:	82 e0       	ldi	r24, 0x02	; 2
+ 104:	90 e0       	ldi	r25, 0x00	; 0
+ 106:	cf d0       	rcall	.+414    	; 0x2a6 <eeprom_write_byte>
+ 108:	1c c0       	rjmp	.+56     	; 0x142 <main+0x7a>
+		}else{
+		//Switch to next mode
+		mode++;
+ 10a:	8d 81       	ldd	r24, Y+5	; 0x05
+ 10c:	8f 5f       	subi	r24, 0xFF	; 255
+ 10e:	8d 83       	std	Y+5, r24	; 0x05
+		eeprom_busy_wait(); //make sure eeprom is ready
+ 110:	e1 99       	sbic	0x1c, 1	; 28
+ 112:	fe cf       	rjmp	.-4      	; 0x110 <main+0x48>
+		eeprom_write_byte(&MODE_P, mode); // save mode
+ 114:	6d 81       	ldd	r22, Y+5	; 0x05
+ 116:	82 e0       	ldi	r24, 0x02	; 2
+ 118:	90 e0       	ldi	r25, 0x00	; 0
+ 11a:	c5 d0       	rcall	.+394    	; 0x2a6 <eeprom_write_byte>
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+ 11c:	82 e0       	ldi	r24, 0x02	; 2
+ 11e:	89 bd       	out	0x29, r24	; 41
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+ 120:	2f ef       	ldi	r18, 0xFF	; 255
+ 122:	3b ed       	ldi	r19, 0xDB	; 219
+ 124:	85 e0       	ldi	r24, 0x05	; 5
+ 126:	21 50       	subi	r18, 0x01	; 1
+ 128:	30 40       	sbci	r19, 0x00	; 0
+ 12a:	80 40       	sbci	r24, 0x00	; 0
+ 12c:	e1 f7       	brne	.-8      	; 0x126 <main+0x5e>
+ 12e:	00 c0       	rjmp	.+0      	; 0x130 <main+0x68>
+ 130:	00 00       	nop
+
+		pwm_write(2);
+		_delay_ms(200);
+		
+		//Stay in Mode
+		mode = prev_mode;
+ 132:	8c 81       	ldd	r24, Y+4	; 0x04
+ 134:	8d 83       	std	Y+5, r24	; 0x05
+		eeprom_busy_wait(); //make sure eeprom is ready
+ 136:	e1 99       	sbic	0x1c, 1	; 28
+ 138:	fe cf       	rjmp	.-4      	; 0x136 <main+0x6e>
+		eeprom_write_byte(&MODE_P, mode); // save mode
+ 13a:	6d 81       	ldd	r22, Y+5	; 0x05
+ 13c:	82 e0       	ldi	r24, 0x02	; 2
+ 13e:	90 e0       	ldi	r25, 0x00	; 0
+ 140:	b2 d0       	rcall	.+356    	; 0x2a6 <eeprom_write_byte>
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+ 142:	19 bc       	out	0x29, r1	; 41
+ 144:	9f ef       	ldi	r25, 0xFF	; 255
+ 146:	2d ee       	ldi	r18, 0xED	; 237
+ 148:	32 e0       	ldi	r19, 0x02	; 2
+ 14a:	91 50       	subi	r25, 0x01	; 1
+ 14c:	20 40       	sbci	r18, 0x00	; 0
+ 14e:	30 40       	sbci	r19, 0x00	; 0
+ 150:	e1 f7       	brne	.-8      	; 0x14a <main+0x82>
+ 152:	00 c0       	rjmp	.+0      	; 0x154 <main+0x8c>
+ 154:	00 00       	nop
+		eeprom_busy_wait(); //make sure eeprom is ready
+		eeprom_write_byte(&MODE_P, mode); // save mode
+	}	
+	pwm_write(0);
+	_delay_ms(100);
+	prev_mode = mode;
+ 156:	8d 81       	ldd	r24, Y+5	; 0x05
+ 158:	8c 83       	std	Y+4, r24	; 0x04
+			level = customlevel;
+			break;
+			
+			default:
+			//in case the EEPROM is defekt this mode will be always possible
+			level=127;
+ 15a:	1f e7       	ldi	r17, 0x7F	; 127
+			//Medium mode
+			level=127;
+			break;
+			case 3:
+			//Full mode
+			level=255;
+ 15c:	ee 24       	eor	r14, r14
+ 15e:	ea 94       	dec	r14
+			//Super low mode (you can go lower but this works with my Cree® XLamp® XP-L LED)
+			level=2;
+			break;
+			case 1:
+			//Low mode
+			level=20;
+ 160:	0f 2e       	mov	r0, r31
+ 162:	f4 e1       	ldi	r31, 0x14	; 20
+ 164:	ff 2e       	mov	r15, r31
+ 166:	f0 2d       	mov	r31, r0
+			mode = prev_mode; //if Battery is >10% go back to last mode			
+		}
+		switch(mode){
+			case 0:
+			//Super low mode (you can go lower but this works with my Cree® XLamp® XP-L LED)
+			level=2;
+ 168:	02 e0       	ldi	r16, 0x02	; 2
+	pwm_write(0);
+	_delay_ms(100);
+	prev_mode = mode;
+	
+	while (1) {		
+		battery = ADC_Read_Avg(1,5); // Read Battery Voltage
+ 16a:	65 e0       	ldi	r22, 0x05	; 5
+ 16c:	81 e0       	ldi	r24, 0x01	; 1
+ 16e:	76 df       	rcall	.-276    	; 0x5c <_Z12ADC_Read_Avghh>
+ 170:	89 83       	std	Y+1, r24	; 0x01
+		if(battery<=175){
+ 172:	89 81       	ldd	r24, Y+1	; 0x01
+ 174:	80 3b       	cpi	r24, 0xB0	; 176
+ 176:	10 f4       	brcc	.+4      	; 0x17c <main+0xb4>
+			mode=0; //if Battery is <10% (3.12V) go in super low mode
+ 178:	1d 82       	std	Y+5, r1	; 0x05
+ 17a:	02 c0       	rjmp	.+4      	; 0x180 <main+0xb8>
+		}else{
+			mode = prev_mode; //if Battery is >10% go back to last mode			
+ 17c:	8c 81       	ldd	r24, Y+4	; 0x04
+ 17e:	8d 83       	std	Y+5, r24	; 0x05
+		}
+		switch(mode){
+ 180:	8d 81       	ldd	r24, Y+5	; 0x05
+ 182:	90 e0       	ldi	r25, 0x00	; 0
+ 184:	87 30       	cpi	r24, 0x07	; 7
+ 186:	91 05       	cpc	r25, r1
+ 188:	08 f0       	brcs	.+2      	; 0x18c <main+0xc4>
+ 18a:	57 c0       	rjmp	.+174    	; 0x23a <main+0x172>
+ 18c:	fc 01       	movw	r30, r24
+ 18e:	e6 5f       	subi	r30, 0xF6	; 246
+ 190:	ff 4f       	sbci	r31, 0xFF	; 255
+ 192:	09 94       	ijmp
+			case 0:
+			//Super low mode (you can go lower but this works with my Cree® XLamp® XP-L LED)
+			level=2;
+ 194:	0a 83       	std	Y+2, r16	; 0x02
+			break;
+ 196:	52 c0       	rjmp	.+164    	; 0x23c <main+0x174>
+			case 1:
+			//Low mode
+			level=20;
+ 198:	fa 82       	std	Y+2, r15	; 0x02
+			break;
+ 19a:	50 c0       	rjmp	.+160    	; 0x23c <main+0x174>
+			case 2:
+			//Medium mode
+			level=127;
+ 19c:	1a 83       	std	Y+2, r17	; 0x02
+			break;
+ 19e:	4e c0       	rjmp	.+156    	; 0x23c <main+0x174>
+			case 3:
+			//Full mode
+			level=255;
+ 1a0:	ea 82       	std	Y+2, r14	; 0x02
+			break;
+ 1a2:	4c c0       	rjmp	.+152    	; 0x23c <main+0x174>
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+ 1a4:	8f ef       	ldi	r24, 0xFF	; 255
+ 1a6:	89 bd       	out	0x29, r24	; 41
+ 1a8:	9f ef       	ldi	r25, 0xFF	; 255
+ 1aa:	26 e7       	ldi	r18, 0x76	; 118
+ 1ac:	31 e0       	ldi	r19, 0x01	; 1
+ 1ae:	91 50       	subi	r25, 0x01	; 1
+ 1b0:	20 40       	sbci	r18, 0x00	; 0
+ 1b2:	30 40       	sbci	r19, 0x00	; 0
+ 1b4:	e1 f7       	brne	.-8      	; 0x1ae <main+0xe6>
+ 1b6:	00 c0       	rjmp	.+0      	; 0x1b8 <main+0xf0>
+ 1b8:	00 00       	nop
+ 1ba:	19 bc       	out	0x29, r1	; 41
+ 1bc:	9f ef       	ldi	r25, 0xFF	; 255
+ 1be:	26 e7       	ldi	r18, 0x76	; 118
+ 1c0:	31 e0       	ldi	r19, 0x01	; 1
+ 1c2:	91 50       	subi	r25, 0x01	; 1
+ 1c4:	20 40       	sbci	r18, 0x00	; 0
+ 1c6:	30 40       	sbci	r19, 0x00	; 0
+ 1c8:	e1 f7       	brne	.-8      	; 0x1c2 <main+0xfa>
+ 1ca:	00 c0       	rjmp	.+0      	; 0x1cc <main+0x104>
+ 1cc:	00 00       	nop
+ 1ce:	eb cf       	rjmp	.-42     	; 0x1a6 <main+0xde>
+				pwm_write(customlevel);
+				eeprom_busy_wait(); //make sure eeprom is ready
+				eeprom_write_byte(&LEVEL_P, customlevel); // save mode
+				customlevel++;
+				if(level>100)
+				customlevel=2;
+ 1d0:	12 e0       	ldi	r17, 0x02	; 2
+			}
+			break;
+			case 5:
+			//Set level for custom brightness mode, if you have the right Level turn off the Flashlight and switch to Mode 6
+			while(1){
+				if(customlevel==2)
+ 1d2:	8b 81       	ldd	r24, Y+3	; 0x03
+ 1d4:	82 30       	cpi	r24, 0x02	; 2
+ 1d6:	49 f4       	brne	.+18     	; 0x1ea <main+0x122>
+ 1d8:	8f ef       	ldi	r24, 0xFF	; 255
+ 1da:	93 ee       	ldi	r25, 0xE3	; 227
+ 1dc:	27 e5       	ldi	r18, 0x57	; 87
+ 1de:	81 50       	subi	r24, 0x01	; 1
+ 1e0:	90 40       	sbci	r25, 0x00	; 0
+ 1e2:	20 40       	sbci	r18, 0x00	; 0
+ 1e4:	e1 f7       	brne	.-8      	; 0x1de <main+0x116>
+ 1e6:	00 c0       	rjmp	.+0      	; 0x1e8 <main+0x120>
+ 1e8:	00 00       	nop
+				_delay_ms(3000); //Wait on lowest mode
+				if(customlevel==100)
+ 1ea:	8b 81       	ldd	r24, Y+3	; 0x03
+ 1ec:	84 36       	cpi	r24, 0x64	; 100
+ 1ee:	49 f4       	brne	.+18     	; 0x202 <main+0x13a>
+ 1f0:	3f ef       	ldi	r19, 0xFF	; 255
+ 1f2:	83 ee       	ldi	r24, 0xE3	; 227
+ 1f4:	97 e5       	ldi	r25, 0x57	; 87
+ 1f6:	31 50       	subi	r19, 0x01	; 1
+ 1f8:	80 40       	sbci	r24, 0x00	; 0
+ 1fa:	90 40       	sbci	r25, 0x00	; 0
+ 1fc:	e1 f7       	brne	.-8      	; 0x1f6 <main+0x12e>
+ 1fe:	00 c0       	rjmp	.+0      	; 0x200 <main+0x138>
+ 200:	00 00       	nop
+				_delay_ms(3000); //Wait on highest mode
+				pwm_write(customlevel);
+ 202:	8b 81       	ldd	r24, Y+3	; 0x03
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+ 204:	89 bd       	out	0x29, r24	; 41
+				if(customlevel==2)
+				_delay_ms(3000); //Wait on lowest mode
+				if(customlevel==100)
+				_delay_ms(3000); //Wait on highest mode
+				pwm_write(customlevel);
+				eeprom_busy_wait(); //make sure eeprom is ready
+ 206:	e1 99       	sbic	0x1c, 1	; 28
+ 208:	fe cf       	rjmp	.-4      	; 0x206 <main+0x13e>
+				eeprom_write_byte(&LEVEL_P, customlevel); // save mode
+ 20a:	6b 81       	ldd	r22, Y+3	; 0x03
+ 20c:	81 e0       	ldi	r24, 0x01	; 1
+ 20e:	90 e0       	ldi	r25, 0x00	; 0
+ 210:	4a d0       	rcall	.+148    	; 0x2a6 <eeprom_write_byte>
+				customlevel++;
+ 212:	8b 81       	ldd	r24, Y+3	; 0x03
+ 214:	8f 5f       	subi	r24, 0xFF	; 255
+ 216:	8b 83       	std	Y+3, r24	; 0x03
+				if(level>100)
+ 218:	8a 81       	ldd	r24, Y+2	; 0x02
+ 21a:	85 36       	cpi	r24, 0x65	; 101
+ 21c:	08 f0       	brcs	.+2      	; 0x220 <main+0x158>
+				customlevel=2;
+ 21e:	1b 83       	std	Y+3, r17	; 0x03
+ 220:	2f ef       	ldi	r18, 0xFF	; 255
+ 222:	3b ed       	ldi	r19, 0xDB	; 219
+ 224:	85 e0       	ldi	r24, 0x05	; 5
+ 226:	21 50       	subi	r18, 0x01	; 1
+ 228:	30 40       	sbci	r19, 0x00	; 0
+ 22a:	80 40       	sbci	r24, 0x00	; 0
+ 22c:	e1 f7       	brne	.-8      	; 0x226 <main+0x15e>
+ 22e:	00 c0       	rjmp	.+0      	; 0x230 <main+0x168>
+ 230:	00 00       	nop
+ 232:	cf cf       	rjmp	.-98     	; 0x1d2 <main+0x10a>
+				_delay_ms(200);
+			}
+			break;
+			case 6:
+			//Custom brightness mode 
+			level = customlevel;
+ 234:	8b 81       	ldd	r24, Y+3	; 0x03
+ 236:	8a 83       	std	Y+2, r24	; 0x02
+			break;
+ 238:	01 c0       	rjmp	.+2      	; 0x23c <main+0x174>
+			
+			default:
+			//in case the EEPROM is defekt this mode will be always possible
+			level=127;
+ 23a:	1a 83       	std	Y+2, r17	; 0x02
+			break;
+		}				
+		pwm_write(level); //Set PWM for Led
+ 23c:	8a 81       	ldd	r24, Y+2	; 0x02
+	TCCR0A |= (1 << COM0B1);
+}
+
+void pwm_write (unsigned char val)
+{
+	OCR0B = val;
+ 23e:	89 bd       	out	0x29, r24	; 41
+ 240:	9f ef       	ldi	r25, 0xFF	; 255
+ 242:	2b e7       	ldi	r18, 0x7B	; 123
+ 244:	32 e9       	ldi	r19, 0x92	; 146
+ 246:	91 50       	subi	r25, 0x01	; 1
+ 248:	20 40       	sbci	r18, 0x00	; 0
+ 24a:	30 40       	sbci	r19, 0x00	; 0
+ 24c:	e1 f7       	brne	.-8      	; 0x246 <main+0x17e>
+ 24e:	00 c0       	rjmp	.+0      	; 0x250 <main+0x188>
+ 250:	00 00       	nop
+ 252:	8b cf       	rjmp	.-234    	; 0x16a <main+0xa2>
+
+00000254 <__udivmodsi4>:
+ 254:	a1 e2       	ldi	r26, 0x21	; 33
+ 256:	1a 2e       	mov	r1, r26
+ 258:	aa 1b       	sub	r26, r26
+ 25a:	bb 1b       	sub	r27, r27
+ 25c:	fd 01       	movw	r30, r26
+ 25e:	0d c0       	rjmp	.+26     	; 0x27a <__udivmodsi4_ep>
+
+00000260 <__udivmodsi4_loop>:
+ 260:	aa 1f       	adc	r26, r26
+ 262:	bb 1f       	adc	r27, r27
+ 264:	ee 1f       	adc	r30, r30
+ 266:	ff 1f       	adc	r31, r31
+ 268:	a2 17       	cp	r26, r18
+ 26a:	b3 07       	cpc	r27, r19
+ 26c:	e4 07       	cpc	r30, r20
+ 26e:	f5 07       	cpc	r31, r21
+ 270:	20 f0       	brcs	.+8      	; 0x27a <__udivmodsi4_ep>
+ 272:	a2 1b       	sub	r26, r18
+ 274:	b3 0b       	sbc	r27, r19
+ 276:	e4 0b       	sbc	r30, r20
+ 278:	f5 0b       	sbc	r31, r21
+
+0000027a <__udivmodsi4_ep>:
+ 27a:	66 1f       	adc	r22, r22
+ 27c:	77 1f       	adc	r23, r23
+ 27e:	88 1f       	adc	r24, r24
+ 280:	99 1f       	adc	r25, r25
+ 282:	1a 94       	dec	r1
+ 284:	69 f7       	brne	.-38     	; 0x260 <__udivmodsi4_loop>
+ 286:	60 95       	com	r22
+ 288:	70 95       	com	r23
+ 28a:	80 95       	com	r24
+ 28c:	90 95       	com	r25
+ 28e:	9b 01       	movw	r18, r22
+ 290:	ac 01       	movw	r20, r24
+ 292:	bd 01       	movw	r22, r26
+ 294:	cf 01       	movw	r24, r30
+ 296:	08 95       	ret
+
+00000298 <eeprom_read_byte>:
+ 298:	e1 99       	sbic	0x1c, 1	; 28
+ 29a:	fe cf       	rjmp	.-4      	; 0x298 <eeprom_read_byte>
+ 29c:	8e bb       	out	0x1e, r24	; 30
+ 29e:	e0 9a       	sbi	0x1c, 0	; 28
+ 2a0:	99 27       	eor	r25, r25
+ 2a2:	8d b3       	in	r24, 0x1d	; 29
+ 2a4:	08 95       	ret
+
+000002a6 <eeprom_write_byte>:
+ 2a6:	26 2f       	mov	r18, r22
+
+000002a8 <eeprom_write_r18>:
+ 2a8:	e1 99       	sbic	0x1c, 1	; 28
+ 2aa:	fe cf       	rjmp	.-4      	; 0x2a8 <eeprom_write_r18>
+ 2ac:	1c ba       	out	0x1c, r1	; 28
+ 2ae:	8e bb       	out	0x1e, r24	; 30
+ 2b0:	2d bb       	out	0x1d, r18	; 29
+ 2b2:	0f b6       	in	r0, 0x3f	; 63
+ 2b4:	f8 94       	cli
+ 2b6:	e2 9a       	sbi	0x1c, 2	; 28
+ 2b8:	e1 9a       	sbi	0x1c, 1	; 28
+ 2ba:	0f be       	out	0x3f, r0	; 63
+ 2bc:	01 96       	adiw	r24, 0x01	; 1
+ 2be:	08 95       	ret
+
+000002c0 <_exit>:
+ 2c0:	f8 94       	cli
+
+000002c2 <__stop_program>:
+ 2c2:	ff cf       	rjmp	.-2      	; 0x2c2 <__stop_program>
