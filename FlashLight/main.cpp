@@ -81,7 +81,7 @@ void pwm_write (unsigned char val)
 }
 
 int main (void)
-{	
+{
 	ADC_Init();
 	pwm_setup();
 	// LED is an output.
@@ -92,7 +92,7 @@ int main (void)
 	volatile uint8_t	mode = eeprom_read_byte(&MODE_P);
 	volatile uint8_t	prev_mode = mode;
 	volatile uint8_t	customlevel = eeprom_read_byte(&LEVEL_P);
-	volatile uint8_t	level = 0,battery=0;
+	volatile uint8_t	level = 0,battery=0xFFFF;
 	
 	if(mode>MODE_COUNT){
 		mode=0;
@@ -111,18 +111,12 @@ int main (void)
 		mode = prev_mode;
 		eeprom_busy_wait(); //make sure eeprom is ready
 		eeprom_write_byte(&MODE_P, mode); // save mode
-	}	
+	}
 	pwm_write(0);
 	_delay_ms(100);
 	prev_mode = mode;
 	
-	while (1) {		
-		battery = ADC_Read_Avg(1,5); // Read Battery Voltage 175 was with my Driver ~3.12V
-		if(battery<=175){
-			mode=0; //if Battery is <10% (3.12V) go in super low mode
-		}else{
-			mode = prev_mode; //if Battery is >10% go back to last mode			
-		}
+	while (1) {
 		switch(mode){
 			case 0:
 			//Super low mode (you can go lower but this works with my Cree® XLamp® XP-L LED)
@@ -166,7 +160,7 @@ int main (void)
 			}
 			break;
 			case 6:
-			//Custom brightness mode 
+			//Custom brightness mode
 			level = customlevel;
 			break;
 			
@@ -174,8 +168,21 @@ int main (void)
 			//in case the EEPROM is defekt this mode will be always possible
 			level=127;
 			break;
-		}				
+		}
 		pwm_write(level); //Set PWM for Led
-		_delay_ms(5000);
+		if(battery<=0x81){
+			if(level>2){
+				pwm_write(2); //Set PWM for Led
+			}else{
+				pwm_write(0); //Set PWM for Led
+			}
+			_delay_ms(1000);
+			pwm_write(level); //Set PWM for Led
+			_delay_ms(10000);
+		}else{
+			_delay_ms(10000);
+		}
+		
+		battery = ADC_Read_Avg(1,5); // Read Battery Voltage 0x81 was with my Driver ~3.00V
 	}
 }
